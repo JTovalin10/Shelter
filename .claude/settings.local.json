@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export PATH=\"/usr/local/go/bin:$PATH\")",
+      "Bash(go mod:*)",
+      "Bash(go build:*)"
+    ]
+  }
+}
