@@ -3,6 +3,7 @@ package models
 type DiskMetrics struct {
 	// From UsageStat struct
 	// call disk.Usage("/") returns *UsageStat
+	Total uint64 `json:"Total"`
 	Free uint64 `json:"Free"`
 	Used uint64 `json:"Used"`
 	UsedPercent float64 `json:"UsedPercent"`
