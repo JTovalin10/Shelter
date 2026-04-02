@@ -7,4 +7,13 @@ package main
 // - chi router: https://pkg.go.dev/github.com/go-chi/chi/v5
 // - CORS middleware: https://pkg.go.dev/github.com/go-chi/cors
 
-func main() {}
+import (
+      "net/http"
+      "github.com/go-chi/chi/v5"
+      "github.com/go-chi/cors"
+      "shelter/backend/internal/handlers"
+)
+
+func main() {
+
+}
