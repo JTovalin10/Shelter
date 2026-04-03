@@ -1,30 +1,36 @@
 package monitor
 
 import (
-	"github.com/shirou/gopsutil/v4/net"
+	gopsnet "github.com/shirou/gopsutil/v4/net"
 	"shelter/backend/internal/models"
 )
 
-func CollectNetwork() (models.NetworkMetrics, err) {
-	IO, err := net.IOCounters(false) // returns sum of all information
-	if err != nil {
-		return models.NetworkMetrics, err
+func CollectNetwork() (models.NetworkMetrics, error) {
+	io, err := gopsnet.IOCounters(false) // false = aggregate all interfaces
+	if err != nil || len(io) == 0 {
+		return models.NetworkMetrics{}, err
 	}
 
-	addr, err := net.Addr
+	interfaces, err := gopsnet.Interfaces()
 	if err != nil {
 		return models.NetworkMetrics{}, err
 	}
 
-	result := {
-		Name: IO.Name,
-		BytesSent: IO.BytesSent,
-		BytesRecv: IO.BytesRecv,
-		PacketsSent: IO.BytesSent,
-		PacketsRecv: IO.BytesRecv,
-		IP: addr.IP,
-		Port: addr.Port
+	var ip string
+	for _, iface := range interfaces {
+		if iface.Name != "lo" && len(iface.Addrs) > 0 {
+			ip = iface.Addrs[0].Addr
+			break
+		}
 	}
 
+	result := models.NetworkMetrics{
+		Name:        io[0].Name,
+		BytesSent:   io[0].BytesSent,
+		BytesRecv:   io[0].BytesRecv,
+		PacketsSent: io[0].PacketsSent,
+		PacketsRecv: io[0].PacketsRecv,
+		IP:          ip,
+	}
 	return result, nil
 }

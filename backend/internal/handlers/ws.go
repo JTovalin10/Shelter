@@ -1,50 +1,59 @@
 package handlers
 
-Docs: https://pkg.go.dev/github.com/gorilla/websocket
+// Docs: https://pkg.go.dev/github.com/gorilla/websocket
+
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
+	"shelter/backend/internal/models"
 	"shelter/backend/internal/monitor"
 )
 
-// the upgrader config (package-level var, not a function)
-var upgrader = websocket.Upgrader {
-	ReadBufferSize: 1024,
-	WriteBufferSize: 1024
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true // restrict in production
+	},
 }
 
-// HTTP handler that upgrades to WebSocket and starts streaming
+func RegisterRoutes(r chi.Router) {
+	r.Get("/ws", handleWebSocket)
+}
+
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	con, err := upgrader.upgrader(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		log.Println("upgrade error:", err)
 		return
 	}
-	// closes when function returns
-	defer con.close()
+	defer conn.Close()
 
-	ticker := time.newTicker(2 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
 
 	for range ticker.C {
 		metrics := collectAll()
 		data, err := json.Marshal(metrics)
 		if err != nil {
-			return // issue with json
+			return
 		}
-		if err := con.WriteMessage(websocket.TextMessage, data); err != nil {
+		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
 			return // client disconnected
 		}
 	}
 }
 
-// collects all metrics into one SystemMetriics struct
-func collectAll() models.SystemMetrics {
-	cpu, _ = CollectCpu()
-	disk, _ = CollectDisk()
-	host, _ = CollectHost()
-	mem, _= CollectMemory()
-	net, _ = CollectNetwork()
-	return models.SystemMetrics{CPU: cpu, Memory: mem, Disk: disk, Network: net, Host: host}
+func collectAll() models.Metrics {
+	cpu, _ := monitor.CollectCpu()
+	disk, _ := monitor.CollectDisk()
+	host, _ := monitor.CollectHost()
+	mem, _ := monitor.CollectMemory()
+	net, _ := monitor.CollectNetwork()
+	return models.Metrics{CPU: cpu, Memory: mem, Disk: disk, Network: net, Host: host}
 }

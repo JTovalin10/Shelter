@@ -5,19 +5,18 @@ import (
 	"shelter/backend/internal/models"
 )
 
-func CollectDisk() (models.DiskMetrics, err) {
-	usage, err := disk.Usage("/") // gets *UsageStat, err from root
-
+func CollectDisk() (models.DiskMetrics, error) {
+	usage, err := disk.Usage("/")
 	if err != nil {
 		return models.DiskMetrics{}, err
 	}
 
-	partitions, err := disk.Partitions(false) // returns physical devices only
+	partitions, err := disk.Partitions(false)
 	if err != nil {
 		return models.DiskMetrics{}, err
 	}
 
-	counters, err := disk.IOCounters() // get all devices
+	counters, err := disk.IOCounters()
 	if err != nil {
 		return models.DiskMetrics{}, err
 	}
@@ -28,14 +27,14 @@ func CollectDisk() (models.DiskMetrics, err) {
 		totalWrites += stats.WriteCount
 	}
 
-	results := {
-		Total: usage.Total,
-		Free: usage.Free,
-		Used: usage.Used,
+	result := models.DiskMetrics{
+		Total:       usage.Total,
+		Free:        usage.Free,
+		Used:        usage.Used,
 		UsedPercent: usage.UsedPercent,
-		Device: partitions.Device,
-		ReadCount: totalReads,
-		WriteCount: WriteCount,
+		Device:      partitions[0].Device,
+		ReadCount:   totalReads,
+		WriteCount:  totalWrites,
 	}
-	return results, nil
+	return result, nil
 }

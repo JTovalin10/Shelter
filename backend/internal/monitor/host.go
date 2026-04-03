@@ -5,17 +5,16 @@ import (
 	"shelter/backend/internal/models"
 )
 
-func CollectHost() (models.HostMetrics, err) {
+func CollectHost() (models.HostMetrics, error) {
 	info, err := host.Info()
 	if err != nil {
 		return models.HostMetrics{}, err
 	}
 
-	result := {
+	result := models.HostMetrics{
 		Uptime: info.Uptime,
-		Procs: info.Procs,
-		OS: info.OS,
+		Procs:  info.Procs,
+		OS:     info.OS,
 	}
-
 	return result, nil
 }
