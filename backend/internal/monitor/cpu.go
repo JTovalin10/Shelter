@@ -37,9 +37,6 @@ func CollectCpu() (models.CPUMetrics, error) {
 		Iowait:         times[0].Iowait,
 		Steal:          times[0].Steal,
 		ModelName:      info[0].ModelName,
-		Cores:          info[0].Cores,
-		Mhz:            info[0].Mhz,
-		CacheSize:      info[0].CacheSize,
 		Timestamp:      time.Now().UnixMilli(),
 	}
 	return result, nil

@@ -1,8 +1,9 @@
 package monitor
 
 import (
-	"github.com/shirou/gopsutil/v4/host"
 	"shelter/backend/internal/models"
+
+	"github.com/shirou/gopsutil/v4/host"
 )
 
 func CollectHost() (models.HostMetrics, error) {
@@ -17,4 +18,28 @@ func CollectHost() (models.HostMetrics, error) {
 		OS:     info.OS,
 	}
 	return result, nil
+}
+
+func CollectOS() (string, error) {
+	info, err := host.Info()
+	if err != nil {
+		return "", err
+	}
+	return info.OS, nil
+}
+
+func CollectUptime() (uint64, error) {
+	info, err := host.Info()
+	if err != nil {
+		return 0, err
+	}
+	return info.Uptime, nil
+}
+
+func CollectProcs() (uint64, error) {
+	info, err := host.Info()
+	if err != nil {
+		return 0, err
+	}
+	return info.Procs, nil
 }

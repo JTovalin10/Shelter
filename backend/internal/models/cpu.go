@@ -14,9 +14,7 @@ type CPUMetrics struct {
 
 	// From cpu.Info()
 	ModelName string  `json:"model_name"`
-	Cores     int32   `json:"cores"`
-	Mhz       float64 `json:"mhz"`
-	CacheSize int32   `json:"cache_size"`
+
 
 	// Metadata
 	Timestamp int64 `json:"timestamp"` // unix ms, for charting x-axis

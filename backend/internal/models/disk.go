@@ -1,20 +1,11 @@
 package models
 
 type DiskMetrics struct {
-	// From UsageStat struct
-	// call disk.Usage("/") returns *UsageStat
-	Total uint64 `json:"Total"`
-	Free uint64 `json:"Free"`
-	Used uint64 `json:"Used"`
-	UsedPercent float64 `json:"UsedPercent"`
-
-	// from PartitionState struct
-	// call disk.Partitions(false) returns []PartitionStat
-	Device string `json:"Device"`
-
-	// From IOCounterState struct
-	// call disk.IOCounterts returns map[string]IOCounterStat
-	ReadCount uint64 `json:"readCount"`
-	WriteCount uint64 `json:"writeCount"`
-
+	Total       uint64  `json:"total"`
+	Free        uint64  `json:"free"`
+	Used        uint64  `json:"used"`
+	UsedPercent float64 `json:"usedPercent"`
+	Device      string  `json:"device"`
+	ReadCount   uint64  `json:"readCount"`
+	WriteCount  uint64  `json:"writeCount"`
 }
